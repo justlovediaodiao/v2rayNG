@@ -593,7 +593,7 @@ data class V2rayConfig(
     ) // roughly 10 times smaller than total ip pool
 
     fun getProxyOutbound(): OutboundBean? {
-        outbounds.forEach { outbound ->
+        outbounds?.forEach { outbound ->
             EConfigType.entries.forEach {
                 if (outbound.protocol.equals(it.name, true)) {
                     return outbound
