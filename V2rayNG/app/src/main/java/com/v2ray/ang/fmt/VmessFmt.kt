@@ -3,13 +3,13 @@ package com.v2ray.ang.fmt
 import android.text.TextUtils
 import android.util.Log
 import com.v2ray.ang.AppConfig
-import com.v2ray.ang.dto.EConfigType
-import com.v2ray.ang.dto.NetworkType
 import com.v2ray.ang.dto.ProfileItem
 import com.v2ray.ang.dto.V2rayConfig.OutboundBean
 import com.v2ray.ang.dto.VmessQRCode
+import com.v2ray.ang.enums.EConfigType
+import com.v2ray.ang.enums.NetworkType
 import com.v2ray.ang.extension.idnHost
-import com.v2ray.ang.extension.isNotNullEmpty
+import com.v2ray.ang.extension.nullIfBlank
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.V2rayConfigManager
 import com.v2ray.ang.util.JsonUtil
@@ -37,7 +37,7 @@ object VmessFmt : FmtBase() {
             Log.w(AppConfig.TAG, "Toast decoding failed")
             return null
         }
-        val vmessQRCode = JsonUtil.fromJson(result, VmessQRCode::class.java)
+        val vmessQRCode = JsonUtil.fromJson(result, VmessQRCode::class.java) ?: return null
         // Although VmessQRCode fields are non null, looks like Gson may still create null fields
         if (TextUtils.isEmpty(vmessQRCode.add)
             || TextUtils.isEmpty(vmessQRCode.port)
@@ -52,9 +52,13 @@ object VmessFmt : FmtBase() {
         config.server = vmessQRCode.add
         config.serverPort = vmessQRCode.port
         config.password = vmessQRCode.id
-        config.method = if (TextUtils.isEmpty(vmessQRCode.scy)) AppConfig.DEFAULT_SECURITY else vmessQRCode.scy
+        config.method =
+            if (TextUtils.isEmpty(vmessQRCode.scy)) AppConfig.DEFAULT_SECURITY else vmessQRCode.scy
 
-        config.network = vmessQRCode.net ?: NetworkType.TCP.type
+        config.network = vmessQRCode.net
+        if (config.network.isNullOrEmpty()) {
+            config.network = NetworkType.TCP.type
+        }
         config.headerType = vmessQRCode.type
         config.host = vmessQRCode.host
         config.path = vmessQRCode.path
@@ -78,7 +82,7 @@ object VmessFmt : FmtBase() {
             else -> {}
         }
 
-        config.security = vmessQRCode.tls     
+        config.security = vmessQRCode.tls
         config.sni = vmessQRCode.sni
         config.fingerPrint = vmessQRCode.fp
         config.alpn = vmessQRCode.alpn
@@ -128,8 +132,8 @@ object VmessFmt : FmtBase() {
             else -> {}
         }
 
-        config.host.let { if (it.isNotNullEmpty()) vmessQRCode.host = it.orEmpty() }
-        config.path.let { if (it.isNotNullEmpty()) vmessQRCode.path = it.orEmpty() }
+        config.host?.nullIfBlank()?.let { vmessQRCode.host = it }
+        config.path?.nullIfBlank()?.let { vmessQRCode.path = it }
 
         vmessQRCode.tls = config.security.orEmpty()
         vmessQRCode.sni = config.sni.orEmpty()
@@ -159,7 +163,7 @@ object VmessFmt : FmtBase() {
         if (uri.rawQuery.isNullOrEmpty()) return null
         val queryParam = getQueryParam(uri)
 
-        config.remarks = Utils.urlDecode(uri.fragment.orEmpty()).let { if (it.isEmpty()) "none" else it }
+        config.remarks = Utils.decodeURIComponent(uri.fragment.orEmpty()).let { it.ifEmpty { "none" } }
         config.server = uri.idnHost
         config.serverPort = uri.port.toString()
         config.password = uri.userInfo
