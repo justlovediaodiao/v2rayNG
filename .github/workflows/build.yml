@@ -19,7 +19,7 @@ jobs:
         fetch-depth: '0'
 
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3.2.0
+      uses: android-actions/setup-android@v4.0.1
       with:
         log-accepted-android-sdk-licenses: false
         cmdline-tools-version: '13114758'
@@ -79,7 +79,7 @@ jobs:
         cd MyAndroidLibXrayLite
         gomobile init
         go get golang.org/x/mobile/bind
-        gomobile bind -v -androidapi 21 -trimpath -ldflags='-s -w -buildid=' -o libv2ray.aar
+        gomobile bind -v -androidapi 24 -trimpath -ldflags='-s -w -buildid=' -o libv2ray.aar
         cp libv2ray.aar ../V2rayNG/app/libs/
 
     - name: Setup Java

@@ -1,7 +1,6 @@
 package com.v2ray.ang.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import com.v2ray.ang.AppConfig
@@ -15,6 +14,7 @@ import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.UpdateCheckerManager
 import com.v2ray.ang.handler.V2RayNativeManager
+import com.v2ray.ang.util.LogUtil
 import com.v2ray.ang.util.Utils
 import kotlinx.coroutines.launch
 
@@ -56,10 +56,9 @@ class CheckUpdateActivity : BaseActivity() {
                     toastSuccess(R.string.update_already_latest_version)
                 }
             } catch (e: Exception) {
-                Log.e(AppConfig.TAG, "Failed to check for updates: ${e.message}")
+                LogUtil.e(AppConfig.TAG, "Failed to check for updates: ${e.message}")
                 toastError(e.message ?: getString(R.string.toast_failure))
-            }
-            finally {
+            } finally {
                 hideLoading()
             }
         }

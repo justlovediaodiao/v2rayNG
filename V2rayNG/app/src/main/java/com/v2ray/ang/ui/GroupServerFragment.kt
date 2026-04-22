@@ -2,7 +2,6 @@ package com.v2ray.ang.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +24,7 @@ import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.handler.AngConfigManager
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.helper.SimpleItemTouchHelperCallback
+import com.v2ray.ang.util.LogUtil
 import com.v2ray.ang.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,19 +70,20 @@ class GroupServerFragment : BaseFragment<FragmentGroupServerBinding>(),
         itemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(adapter, allowSwipe = false))
         itemTouchHelper?.attachToRecyclerView(binding.recyclerView)
 
-        binding.refreshLayout.setOnRefreshListener(this)
-        // Set the distance to trigger sync to 160dp
-        binding.refreshLayout.setDistanceToTriggerSync((160 * resources.displayMetrics.density).toInt())
+        binding.refreshLayout.isEnabled = false
+//        binding.refreshLayout.setOnRefreshListener(this)
+//        // Set the distance to trigger sync to 160dp
+//        binding.refreshLayout.setDistanceToTriggerSync((160 * resources.displayMetrics.density).toInt())
 
         mainViewModel.updateListAction.observe(viewLifecycleOwner) { index ->
             if (mainViewModel.subscriptionId != subId) {
                 return@observe
             }
-            // Log.d(TAG, "GroupServerFragment updateListAction subId=$subId")
+            // LogUtil.d(TAG, "GroupServerFragment updateListAction subId=$subId")
             adapter.setData(mainViewModel.serversCache, index)
         }
 
-        // Log.d(TAG, "GroupServerFragment onViewCreated: subId=$subId")
+        // LogUtil.d(TAG, "GroupServerFragment onViewCreated: subId=$subId")
     }
 
     override fun onResume() {
@@ -111,7 +112,7 @@ class GroupServerFragment : BaseFragment<FragmentGroupServerBinding>(),
                     else -> ownerActivity.toast("else")
                 }
             } catch (e: Exception) {
-                Log.e(AppConfig.TAG, "Error when sharing server", e)
+                LogUtil.e(AppConfig.TAG, "Error when sharing server", e)
             }
         }.show()
     }
@@ -280,7 +281,7 @@ class GroupServerFragment : BaseFragment<FragmentGroupServerBinding>(),
 
     override fun onRefresh() {
         ownerActivity.importConfigViaSub()
-        binding.refreshLayout.isRefreshing = false
+        //binding.refreshLayout.isRefreshing = false
     }
 
     /**

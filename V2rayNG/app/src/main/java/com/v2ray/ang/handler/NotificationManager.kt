@@ -9,7 +9,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.v2ray.ang.AppConfig
@@ -17,6 +16,7 @@ import com.v2ray.ang.R
 import com.v2ray.ang.dto.ProfileItem
 import com.v2ray.ang.extension.toSpeedString
 import com.v2ray.ang.ui.MainActivity
+import com.v2ray.ang.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -57,7 +57,7 @@ object NotificationManager {
 
                 // If the query interval is too short, skip this round to avoid excessive CPU usage
                 if (sinceLastQueryIn < QUERY_INTERVAL_MS) {
-                    Log.w(AppConfig.TAG, "Query interval too short: ${sinceLastQueryIn}ms, skipping")
+                    LogUtil.w(AppConfig.TAG, "Query interval too short: ${sinceLastQueryIn}ms, skipping")
                     lastQueryTime = queryTime
                     delay(QUERY_INTERVAL_MS)
                     continue

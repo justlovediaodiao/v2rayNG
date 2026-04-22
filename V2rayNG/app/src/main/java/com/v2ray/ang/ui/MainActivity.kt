@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -33,6 +32,7 @@ import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SettingsChangeManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.V2RayServiceManager
+import com.v2ray.ang.util.LogUtil
 import com.v2ray.ang.util.Utils
 import com.v2ray.ang.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +94,6 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         })
 
         binding.fab.setOnClickListener { handleFabAction() }
-        binding.fabLocate.setOnClickListener { locateSelectedServer() }
         binding.layoutTest.setOnClickListener { handleLayoutTestClick() }
 
         setupGroupTab()
@@ -180,7 +179,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         binding.tvTestState.text = content
     }
 
-    private  fun applyRunningState(isLoading: Boolean, isRunning: Boolean) {
+    private fun applyRunningState(isLoading: Boolean, isRunning: Boolean) {
         if (isLoading) {
             binding.fab.setImageResource(R.drawable.ic_fab_check)
             return
@@ -340,6 +339,10 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
             true
         }
 
+        R.id.locate_selected_config -> {
+            locateSelectedServer()
+            true
+        }
 
         else -> super.onOptionsItemSelected(item)
     }
@@ -382,7 +385,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
             val clipboard = Utils.getClipboard(this)
             importBatchConfig(clipboard)
         } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Failed to import config from clipboard", e)
+            LogUtil.e(AppConfig.TAG, "Failed to import config from clipboard", e)
             return false
         }
         return true
@@ -412,7 +415,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
                     toastError(R.string.toast_failure)
                     hideLoading()
                 }
-                Log.e(AppConfig.TAG, "Failed to import batch config", e)
+                LogUtil.e(AppConfig.TAG, "Failed to import batch config", e)
             }
         }
     }
@@ -424,7 +427,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
         try {
             showFileChooser()
         } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Failed to import config from local file", e)
+            LogUtil.e(AppConfig.TAG, "Failed to import config from local file", e)
             return false
         }
         return true
@@ -566,7 +569,7 @@ class MainActivity : HelperBaseActivity(), NavigationView.OnNavigationItemSelect
                 importBatchConfig(input?.bufferedReader()?.readText())
             }
         } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Failed to read content from URI", e)
+            LogUtil.e(AppConfig.TAG, "Failed to read content from URI", e)
         }
     }
 
