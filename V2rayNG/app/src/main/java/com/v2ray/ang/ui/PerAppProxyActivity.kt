@@ -3,7 +3,6 @@ package com.v2ray.ang.ui
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -23,6 +22,7 @@ import com.v2ray.ang.handler.SettingsChangeManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.util.AppManagerUtil
 import com.v2ray.ang.util.HttpUtil
+import com.v2ray.ang.util.LogUtil
 import com.v2ray.ang.util.Utils
 import com.v2ray.ang.viewmodel.PerAppProxyViewModel
 import es.dmoral.toasty.Toasty
@@ -99,7 +99,7 @@ class PerAppProxyActivity : BaseActivity() {
                 binding.recyclerView.adapter = adapter
 
             } catch (e: Exception) {
-                Log.e(ANG_PACKAGE, "Error loading apps", e)
+                LogUtil.e(ANG_PACKAGE, "Error loading apps", e)
             } finally {
                 hideLoading()
             }
@@ -133,6 +133,7 @@ class PerAppProxyActivity : BaseActivity() {
             allowPerAppProxy()
             true
         }
+
         R.id.invert_selection -> {
             invertSelection()
             allowPerAppProxy()
@@ -194,7 +195,7 @@ class PerAppProxyActivity : BaseActivity() {
                 content = HttpUtil.getUrlContent(url, 5000, httpPort) ?: ""
             }
             launch(Dispatchers.Main) {
-                //Log.i(AppConfig.TAG, content)
+                //LogUtil.i(AppConfig.TAG, content)
                 selectProxyApp(content, true)
                 toastSuccess(R.string.toast_success)
                 hideLoading()
@@ -258,7 +259,7 @@ class PerAppProxyActivity : BaseActivity() {
                 }
             }
         } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Error selecting proxy app", e)
+            LogUtil.e(AppConfig.TAG, "Error selecting proxy app", e)
             return false
         }
         return true

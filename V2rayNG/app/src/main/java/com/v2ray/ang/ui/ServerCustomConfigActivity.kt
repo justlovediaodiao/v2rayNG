@@ -2,7 +2,6 @@ package com.v2ray.ang.ui
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -18,6 +17,7 @@ import com.v2ray.ang.extension.toastSuccess
 import com.v2ray.ang.fmt.CustomFmt
 import com.v2ray.ang.handler.AngConfigManager
 import com.v2ray.ang.handler.MmkvManager
+import com.v2ray.ang.util.LogUtil
 import com.v2ray.ang.util.Utils
 
 class ServerCustomConfigActivity : BaseActivity() {
@@ -79,7 +79,7 @@ class ServerCustomConfigActivity : BaseActivity() {
         val profileItem = try {
             CustomFmt.parse(binding.editor.text.toString())
         } catch (e: Exception) {
-            Log.e(AppConfig.TAG, "Failed to parse custom configuration", e)
+            LogUtil.e(AppConfig.TAG, "Failed to parse custom configuration", e)
             toast("${getString(R.string.toast_malformed_josn)} ${e.cause?.message}")
             return false
         }
