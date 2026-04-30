@@ -390,22 +390,6 @@ object AngConfigManager {
             } catch (e: Exception) {
                 LogUtil.e(AppConfig.TAG, "Failed to parse custom config server JSON array", e)
             }
-
-            try {
-                // For compatibility
-                val config = CustomFmt.parse(server) ?: return 0
-                config.subscriptionId = subid
-                config.description = generateDescription(config)
-                if (!append) {
-                    MmkvManager.removeServerViaSubid(subid)
-                }
-                val key = MmkvManager.encodeServerConfig("", config)
-                MmkvManager.encodeServerRaw(key, server)
-                return 1
-            } catch (e: Exception) {
-                LogUtil.e(AppConfig.TAG, "Failed to parse custom config server as single config", e)
-            }
-            return 0
         } else if (server.startsWith("[Interface]") && server.contains("[Peer]")) {
             try {
                 val config = WireguardFmt.parseWireguardConfFile(server) ?: return R.string.toast_incorrect_protocol
@@ -420,9 +404,23 @@ object AngConfigManager {
                 LogUtil.e(AppConfig.TAG, "Failed to parse WireGuard config file", e)
             }
             return 0
-        } else {
-            return 0
+        } 
+
+        // For compatibility
+        try {
+            val config = CustomFmt.parse(server) ?: return 0
+            config.subscriptionId = subid
+            config.description = generateDescription(config)
+            if (!append) {
+                MmkvManager.removeServerViaSubid(subid)
+            }
+            val key = MmkvManager.encodeServerConfig("", config)
+            MmkvManager.encodeServerRaw(key, server)
+            return 1
+        } catch (e: Exception) {
+            LogUtil.e(AppConfig.TAG, "Failed to parse custom config server as single config", e)
         }
+        return 0
     }
 
     /**
